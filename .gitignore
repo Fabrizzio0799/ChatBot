@@ -1,0 +1,22 @@
+# Node
+frontend/node_modules/
+frontend/.env
+frontend/dist/
+frontend/build/
+
+# Python
+backend/__pycache__/
+backend/.env
+backend/.env.*
+backend/.vscode/
+backend/.idea/
+*.pyc
+
+# General
+.DS_Store
+*.log
+.env
+*.sqlite3
+*.db
+# VSCode settings (opcional)
+.vscode/
