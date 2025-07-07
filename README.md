@@ -149,7 +149,7 @@ Deberías ver:
 
 ## 🙋 Sobre este proyecto
 
-Desarrollado por Fabrizzio Badilla y colaboradores para uso educativo y profesional.  
+Desarrollado por Fabrizio Badilla y colaboradores para uso educativo y profesional.  
 ¡Se aceptan sugerencias y mejoras!
 
 ---
