@@ -123,13 +123,8 @@ export default function App() {
     setInput("");
 
     try {
-      let tokens = 0, cost = 0;
-      await sendMessage(input, (chunk, info) => {
-        if (info && info.tokens !== undefined) {
-          tokens = info.tokens;
-          cost = info.cost;
-        }
-        botMsg.content += chunk;
+      await sendMessage(input, (content, info) => {
+        botMsg.content = content;
         setChats(prev =>
           prev.map((c, idx) =>
             idx === activeChatIndex
@@ -144,11 +139,11 @@ export default function App() {
               : c
           )
         );
+        setTokenInfo(prev => ({
+          ...prev,
+          [activeChat.id]: { tokens: info.tokens, cost: info.cost }
+        }));
       }, activeChat.id);
-      setTokenInfo(prev => ({
-        ...prev,
-        [activeChat.id]: { tokens, cost }
-      }));
     } catch (e) {
       setError("Hubo un error al procesar tu mensaje 😥");
       botMsg.content = "Hubo un error al procesar tu mensaje 😥";

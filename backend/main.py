@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, JSONResponse
 from dotenv import load_dotenv
 import os
 import openai
@@ -65,24 +65,18 @@ async def chat(request: Request):
     user_message = data["message"]
     conversation_id = data.get("conversation_id", None)
 
-    def event_stream():
-        completion = openai.ChatCompletion.create(
-            model=AVAILABLE_MODEL,
-            messages=[
-                {"role": "system", "content": f"You are a helpful assistant. Use the following PDF context:\n{pdf_context}"},
-                {"role": "user", "content": user_message}
-            ],
-            stream=True,
-        )
-        tokens = 0
-        for chunk in completion:
-            if "choices" in chunk:
-                delta = chunk["choices"][0]["delta"]
-                if "content" in delta:
-                    yield f"data: {{ \"type\": \"content\", \"content\": \"{delta['content']}\" }}\n\n"
-            if "usage" in chunk:
-                tokens = chunk["usage"].get("total_tokens", 0)
-        cost = tokens / 1000 * 0.01
-        yield f"data: {{ \"type\": \"done\", \"tokens\": {tokens}, \"cost\": {cost} }}\n\n"
-
-    return StreamingResponse(event_stream(), media_type="text/event-stream")
+    completion = openai.ChatCompletion.create(
+        model=AVAILABLE_MODEL,
+        messages=[
+            {"role": "system", "content": f"You are a helpful assistant. Use the following PDF context:\n{pdf_context}"},
+            {"role": "user", "content": user_message}
+        ]
+    )
+    content = completion.choices[0].message.content
+    tokens = completion.usage.get("total_tokens", 0)
+    cost = tokens / 1000 * 0.01
+    return {
+        "content": content,
+        "tokens": tokens,
+        "cost": cost
+    }
